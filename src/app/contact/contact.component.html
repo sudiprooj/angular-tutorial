@@ -1,3 +1,11 @@
-<p>
-  contact works!
-</p>
+<div>
+  <ul>
+    <li *ngFor="let item of productArray" style="float: left; list-style: none; width: 300px; height: 300px;">
+      <img [src]="item.image" alt="product image" />
+      <br />
+      <span>{{item.name}}</span>
+      <br />
+      <span>${{item.price}}</span>
+    </li>
+  </ul>
+</div>

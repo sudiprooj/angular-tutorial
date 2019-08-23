@@ -16,6 +16,10 @@ const routes: Routes = [
     loadChildren: './about/about.module#AboutModule'
   },
   {
+    path: 'products',
+    loadChildren: './product/product.module#ProductModule'
+  },
+  {
     path: 'contact-us',
     loadChildren: './contact/contact.module#ContactModule'
   }
