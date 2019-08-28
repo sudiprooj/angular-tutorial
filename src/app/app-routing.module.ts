@@ -20,6 +20,10 @@ const routes: Routes = [
     loadChildren: './product/product.module#ProductModule'
   },
   {
+    path: 'products/details/:id',
+    loadChildren: './product/details/details.module#DetailsModule'
+  },
+  {
     path: 'contact-us',
     loadChildren: './contact/contact.module#ContactModule'
   }

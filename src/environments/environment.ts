@@ -5,7 +5,14 @@
 export const environment = {
   production: false
 };
+export const config = {
 
+  host: <string> 'http://localhost:3000',
+  api: <string> 'api',
+  getApi () {
+    return [this.host, this.api].join('/');
+  },
+}
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
