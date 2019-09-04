@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+//import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // Http Intercepter
 import { AuthInterceptor } from './http-interceptor';
@@ -13,6 +14,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
   ],
   imports: [
     BrowserModule,
+    //NgbModule,
     AppRoutingModule,
     HttpClientModule
   ],

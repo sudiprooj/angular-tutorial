@@ -1,0 +1,226 @@
+@font-face {
+  font-family: 'CenturyGothic';
+  src: url('../fonts/CenturyGothic.eot?#iefix') format('embedded-opentype'),  url('../fonts/CenturyGothic.woff') format('woff'), url('../fonts/CenturyGothic.ttf')  format('truetype'), url('../fonts/CenturyGothic.svg#CenturyGothic') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+a[href^=tel] { color: inherit; text-decoration: none;}
+
+::selection {color:#fff;background:#ff4fb4;}
+::-moz-selection {color:#fff;background:#ff4fb4;}
+
+body {
+	font-family: 'Poppins', sans-serif;
+	font-size: 14px;
+	line-height: 22px;
+	color: #706f6f;
+	background: #f2f2f2;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  	color: #000;
+	margin:10px 0;
+}
+h2{
+	font-size: 28px;
+	line-height: 1.2;
+}
+h2 span{
+	color: #870e0e;
+	font-weight: 600;
+}
+.btn {
+	border: 0;
+	border-radius: 0;
+}
+
+.btn.btn-primary:hover {
+  	background-color: #017fb5;
+}
+
+a {
+	text-decoration: none;
+	-webkit-transition: 300ms;
+	-moz-transition: 300ms;
+	-o-transition: 300ms;
+	transition: 300ms;
+}
+
+a:focus, 
+a:hover {
+	text-decoration: none;
+	outline: none;
+}
+p{
+ font-size:18px;
+ line-height:27px;
+ color:#888888;
+ font-weight:400;
+}
+
+ul{
+	padding:0;
+	margin:0;
+	list-style:none;
+}
+
+/*==============Login Modal==================*/
+.wrapper {
+	width: 100%;
+	position: relative;
+}
+.top-row{
+	display: flex;
+	justify-content: space-between;
+	padding:0 60px;	
+}
+.top-row img{
+	margin-top:30px;
+}
+
+.menu-col a{
+	background:#ec871f;
+	text-align: center;
+	border-radius: 50px;
+	color: #fff;
+	font-size: 24px;
+	text-transform: uppercase;
+	padding:20px 35px;
+	margin-top:20px;
+	display: block;
+	float: left;
+	margin-right: 30px;
+}
+.menu-col a:hover{
+	background: #017fb5;
+}
+.menu-col i{
+	font-size:50px;
+	color: #ec871f;
+	margin-top: 25px;
+	cursor: pointer;
+}
+.banner{
+	height:700px;
+	margin-top: 30px;
+	display: flex;
+}
+.banner img{
+	width:100%;
+	height:100%;
+}
+.title-bar a {
+	display: flex;
+	justify-content: space-between;
+	padding:0 100px;
+	font-size:36px;
+	color:rgb(33, 168, 33);
+	margin-top: 30px;
+}
+.description a{
+    display:flex;
+    justify-content:start;
+    padding: 0 60px;
+	font-size: 18px;
+	
+    color: rgb(41, 39, 39);
+    margin: 30px; 
+}
+.about a{
+    display:flex;
+	font-size: 30px;
+	color: #000;
+	margin-top: 30px;	
+}
+.about a:hover{
+	background: #017fb5;
+}
+.about img{
+	margin-top: 30px;
+}
+.ingradient a{
+	display:flex;
+	font-size: 30px;
+	color: #000;
+	margin-top: 30px;
+
+}
+.ingradient a:hover{
+	background: #017fb5;
+}
+.ingradient img{
+	margin-top: 30px;
+}
+.trace a{
+	display:flex;
+	font-size: 30px;
+	color: #000;
+	margin-top: 30px;
+
+}
+.trace a:hover{
+	background: #017fb5;
+
+}
+
+.trace img{
+	margin-top: 30px;
+
+}
+.nutri a{
+	display:flex;
+	font-size: 30px;
+	color: #000;
+	margin-top: 30px;
+
+}
+.nutri a:hover{
+	background: #017fb5;
+
+}
+
+.nutri img{
+	margin-top: 30px;
+
+}
+
+.SpurLetter p{
+	font-size: 30px;
+	display:block;
+	margin-right: auto;
+	margin-left:auto;
+
+}
+
+.email a{
+	display:flex;
+	font-size: 30px;
+	color: #017fb5;
+	margin-top: 30px;
+
+}
+.email a:hover{
+	background: #017fb5;
+
+}
+
+.email img{
+	
+	display:block;
+	margin-right: auto;
+	margin-left:auto;
+
+}
+.fb img{
+	display:block;
+	margin-right: auto;
+	margin-left:auto;
+}
+
+
+
+
+
+

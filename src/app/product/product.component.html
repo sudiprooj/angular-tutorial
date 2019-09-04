@@ -1,4 +1,4 @@
-<div>
+<div style="display: flex;">
   <ul>
     <li *ngFor="let item of productArray" style="float: left; list-style: none; width: 300px; height: 300px;">
       <img [src]="item.image" alt="product image" width="300" (click)="details(item.id);" />
