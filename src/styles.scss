@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'CenturyGothic';
-    src: url('assets/fonts/CenturyGothic.eot?#iefix') format('embedded-opentype'), 
-     url('assets/fonts/CenturyGothic.woff') format('woff'), 
+    src: url('assets/fonts/CenturyGothic.eot?#iefix') format('embedded-opentype'),  
+    url('assets/fonts/CenturyGothic.woff') format('woff'),
      url('assets/fonts/CenturyGothic.ttf')  format('truetype'), 
      url('assets/fonts/CenturyGothic.svg#CenturyGothic') format('svg');
     font-weight: normal;
@@ -18,8 +18,8 @@
       font-family: 'Poppins', sans-serif;
       font-size: 14px;
       line-height: 22px;
-      color: #706f6f;
-      background: #f2f2f2;
+      color: #000;
+      background: #fff;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -27,8 +27,9 @@
       margin:10px 0;
   }
   h2{
-      font-size: 28px;
+      font-size:40px;
       line-height: 1.2;
+      color: #099b63;
   }
   h2 span{
       color: #870e0e;
@@ -57,9 +58,9 @@
       outline: none;
   }
   p{
-   font-size:18px;
+   font-size:20px;
    line-height:27px;
-   color:#888888;
+   color:#646464;
    font-weight:400;
   }
   
@@ -69,7 +70,7 @@
       list-style:none;
   }
   
-  /*==============Login Modal==================*/
+  /*==============Global css==================*/
   .wrapper {
       width: 100%;
       position: relative;
@@ -77,12 +78,10 @@
   .top-row{
       display: flex;
       justify-content: space-between;
-      padding:0 60px;	
   }
   .top-row img{
       margin-top:30px;
   }
-  
   .menu-col a{
       background:#ec871f;
       text-align: center;
@@ -114,110 +113,102 @@
       width:100%;
       height:100%;
   }
-  .title-bar a {
-      display: flex;
-      justify-content: space-between;
-      padding:0 100px;
-      font-size:36px;
-      color:rgb(33, 168, 33);
-      margin-top: 30px;
+  .main-body h2{
+      padding-top:30px;
   }
-  .description a{
-      display:flex;
-      justify-content:start;
-      padding: 0 60px;
-      font-size: 18px;
-      
-      color: rgb(41, 39, 39);
-      margin: 30px; 
+  .about-row{
+      background: #edf8ff;
+      border-radius: 30px;
+      padding: 25px;
+      margin: 30px 0;
   }
-  .about a{
-      display:flex;
-      font-size: 30px;
+  .about-row ul li{
+      font-size: 40px;
       color: #000;
-      margin-top: 30px;	
+      line-height: 141px;	
+      margin: 25px 0;
   }
-  .about a:hover{
-      background: #017fb5;
+  .about-row ul li a{
+      color: #000;	
   }
-  .about img{
-      margin-top: 30px;
-  }
-  .ingradient a{
-      display:flex;
-      font-size: 30px;
-      color: #000;
-      margin-top: 30px;
-  
-  }
-  .ingradient a:hover{
-      background: #017fb5;
-  }
-  .ingradient img{
-      margin-top: 30px;
-  }
-  .trace a{
-      display:flex;
-      font-size: 30px;
-      color: #000;
-      margin-top: 30px;
-  
-  }
-  .trace a:hover{
-      background: #017fb5;
-  
-  }
-  
-  .trace img{
-      margin-top: 30px;
-  
-  }
-  .nutri a{
-      display:flex;
-      font-size: 30px;
-      color: #000;
-      margin-top: 30px;
-  
-  }
-  .nutri a:hover{
-      background: #017fb5;
-  
-  }
-  
-  .nutri img{
-      margin-top: 30px;
-  
-  }
-  
-  .SpurLetter p{
-      font-size: 30px;
-      display:block;
-      margin-right: auto;
-      margin-left:auto;
-  
-  }
-  
-  .email a{
-      display:flex;
-      font-size: 30px;
+  .about-row ul li a:hover{
       color: #017fb5;
-      margin-top: 30px;
-  
   }
-  .email a:hover{
-      background: #017fb5;
-  
+  .fa-about{
+      background: url(assets/images/about-2.png) 0 0 no-repeat;
+      height: 141px;
+      width: 157px;
+      float: left;
+      margin-right:35px;
   }
-  
-  .email img{
-      
-      display:block;
-      margin-right: auto;
-      margin-left:auto;
-  
+  .fa-ingradients{
+      background: url(assets/images/ingradients-2.png) 0 0 no-repeat;
+      height: 141px;
+      width: 157px;
+      float: left;
+      margin-right:35px;
   }
-  .fb img{
-      display:block;
-      margin-right: auto;
-      margin-left:auto;
-  }  
+  .fa-trace{
+      background: url(assets/images/trace-2.png) 0 0 no-repeat;
+      height: 141px;
+      width: 157px;
+      float: left;
+      margin-right:35px;
+  }
+  .fa-nutrition{
+      background: url(assets/images/nutrition-2.png) 0 0 no-repeat;
+      height: 141px;
+      width: 157px;
+      float: left;
+      margin-right:35px;
+  }
+  footer{
+      text-align: center;	
+      background: #fff;
+  }
+  footer .form{
+      margin: 20px 0;
+      display: inline-block;
+      width: 40%;
+  }
+  footer .form input[type="text"]{
+      border:solid 2px #000;
+      height: 60px;
+      border-radius:40px 0 0 40px;
+      width: 70%;
+      float: left;
+      border-right:none;
+      font-size: 20px;
+      color: #ccc;
+      padding-left:32px;
+  }
+  footer .form input[type="button"]{
+      border:solid 2px #000;
+      height: 60px;
+      width: 30%;
+      float: left;
+      background: #f08d27;
+      border-radius:0 40px 40px 0;
+      border-left:none;
+      font-size: 20px;
+      text-transform: uppercase;
+      color: #fff;
+      font-weight: 600;	
+  }
+  footer ul li{
+      font-size: 20px;
+      color: #000;
+      display: inline;
+      text-transform: uppercase;
+      padding:10px;
+      font-weight: 600;
+  }
+  footer ul li a{
+      color: #000;
+  }
+  footer ul li a:hover{
+      color: #017fb5;
+  }
+  .social-icon{
+      margin: 30px 0;
+  }
