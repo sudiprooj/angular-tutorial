@@ -26,6 +26,19 @@ const routes: Routes = [
   {
     path: 'contact-us',
     loadChildren: './contact/contact.module#ContactModule'
+  },
+  {
+    path: 'login',
+    loadChildren: './login/login.module#LoginModule'
+  },
+  {
+    path: 'signup',
+    loadChildren: './signup/signup.module#SignupModule'
+  },
+  //admin routing
+  {
+    path: 'admin/dashboard',
+    loadChildren: './admin/dashboard/dashboard.module#DashboardModule'
   }
 ];
 

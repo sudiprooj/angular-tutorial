@@ -1,0 +1,16 @@
+<div>
+  <form [formGroup]="LoginForm" (ngSubmit)="onSubmit();">
+    <div>
+      <label>Username</label>
+      <input type="text" formControlName="username" />
+      <span *ngIf="LoginForm.get('username').invalid && LoginForm.get('username').touched">Username in required</span>
+    </div>
+    <div>
+      <label>Password</label>
+      <input type="password" formControlName="password" />
+    </div>
+    <div>
+      <button type="submit" (click)="onSubmit();" [disabled]="!LoginForm.valid">Submit</button>
+    </div>
+  </form>
+</div>

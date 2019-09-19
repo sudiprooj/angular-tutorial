@@ -12,5 +12,8 @@
         "image": "https://rukminim1.flixcart.com/image/416/416/j4x207k0/television/2/p/t/lg-24lj470a-original-imaevq28saz6yq7h.jpeg?q=70",
         "price": 300
       }
-  ]
+  ],
+  "login": { 
+    "success" : false
+  }
 }

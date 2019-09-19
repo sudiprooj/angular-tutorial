@@ -21,7 +21,7 @@ export class AuthInterceptor implements HttpInterceptor {
       setHeaders: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       },
-      url: [environment.host, environment.api, request.url].join('/')
+      url: [environment.host, request.url].join('/')
     });
 
     return next.handle(authRequest)

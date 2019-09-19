@@ -1,5 +1,14 @@
+<div class="w3-sidebar w3-bar-block w3-border-right" style="display:none" id="mySidebar">
+  <button onclick="w3_close()" (click)="toggleMenu();" class="w3-bar-item w3-large"><img src="assets/images/close-icon2.png" alt=""/> Close</button>
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About Us</a></li>
+    <li><a href="#">Products</a></li>
+    <li><a href="#">Contact Us</a></li>			
+  </ul>
+</div>
 <div class="wrapper">
-  <header>
+  <header *ngIf="!isAdmin">
     <div class="container-fluid">
       <div class="top-row">
         <img src="assets/images/logo.png" alt="" />
@@ -11,10 +20,16 @@
       </div>
     </div>
   </header>
+  <div class="sidebar" *ngIf="isAdmin">
+    <ul>
+      <li><a href="admin/dashboard">Dashboard</a></li>
+      <li><a href="admin/product">Product</a></li>
+    </ul>
+  </div>
 
   <router-outlet></router-outlet>
 
-  <footer>
+  <!-- <footer *ngIf="!isAdmin">
     <h3>Spur newsletter? Enter your email</h3>
     <div class="form">
       <div class="form-group">
@@ -35,6 +50,6 @@
       <li><a href="#"><img src="assets/images/instagram-icon.png" alt="" /></a>
       <li>
     </ul>
-
-  </footer>
+  </footer> -->
 </div>
+

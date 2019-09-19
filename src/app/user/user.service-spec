@@ -1,0 +1,99 @@
+import { TestBed, async, inject } from '@angular/core/testing';
+
+import {
+  MockBackend,
+  MockConnection
+} from '@angular/http/testing';
+
+import {
+  HttpModule, Http, XHRBackend, Response, ResponseOptions
+} from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+
+import { NBL_USER, NBL_USER_DETAIL } from './user.mock';
+import { UserService } from './user.service';
+
+
+describe('UserService', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ HttpModule ],
+      providers: [
+        UserService,
+        { provide: XHRBackend, useClass: MockBackend }
+      ]
+    });
+  });
+
+  it('can instantiate service when inject service', inject([UserService], (service: UserService) => {
+    expect(service instanceof UserService).toBe(true);
+  }));
+
+  it('can instantiate service with new', inject([Http], (http: Http) => {
+    expect(http).not.toBeNull('http should be provided');
+    const service = new UserService(http);
+    expect(service instanceof UserService).toBe(true, 'new service should be ok');
+  }));
+
+  describe('User Subject', () => {
+    let backend: MockBackend;
+    let service: UserService;
+
+    beforeEach(inject([Http, XHRBackend, UserService], (http: Http, be: MockBackend, user: UserService) => {
+      backend = be;
+      service = new UserService(http);
+    }));
+
+    it('should be null', async(inject([], () => {
+      service.user$
+        .subscribe(user => {
+          expect(user).toBe(null);
+        })
+    })));
+
+    it('should be have a user on next', async(inject([], () => {
+      service.user.next(NBL_USER);
+
+      service.user$
+        .subscribe(user => {
+          expect(user).not.toBe(null);
+          expect(user).toBe(NBL_USER);
+        })
+    })));
+  });
+
+
+  describe('GET updateUserDetails', () => {
+    let backend: MockBackend;
+    let service: UserService;
+
+    const UserResponse: Response = new Response(
+      new ResponseOptions({
+          body: {
+            status: 'success',
+            message: '',
+            data: NBL_USER
+          }
+        }
+      ));
+
+    beforeEach(inject([Http, XHRBackend, UserService], (http: Http, be: MockBackend, user: UserService) => {
+      backend = be;
+      service = new UserService(http);
+    }));
+
+    it('should update user', async(inject([], () => {
+      spyOn(service, 'updateUserDetails').and.callFake(() => {
+        service.user.next(NBL_USER);
+      });
+
+      service.updateUserDetails();
+
+      service.user$
+        .subscribe(user => {
+          expect(user).not.toBe(null);
+          expect(user).toBe(NBL_USER);
+        })
+    })));
+  });
+});

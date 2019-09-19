@@ -8,9 +8,9 @@ export const environment = {
 export const config = {
 
   host: <string> 'http://localhost:3000',
-  api: <string> 'api',
+  //api: <string> 'api',
   getApi () {
-    return [this.host, this.api].join('/');
+    return this.host;
   },
 }
 /*

@@ -1,0 +1,914 @@
+/* tslint:disable:no-unused-variable */
+
+import { TestBed, async, inject } from '@angular/core/testing';
+
+import {
+  MockBackend,
+  MockConnection
+} from '@angular/http/testing';
+
+import {
+  HttpModule, Http, XHRBackend, Response, ResponseOptions
+} from '@angular/http';
+
+import { Observable } from 'rxjs/Observable';
+
+import { AuthService } from './auth.service';
+
+describe('AuthService', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ HttpModule ],
+      providers: [
+        AuthService,
+        { provide: XHRBackend, useClass: MockBackend }
+      ]
+    });
+  });
+
+  it('can instantiate service when inject service', inject([AuthService], (service: AuthService) => {
+    expect(service instanceof AuthService).toBe(true);
+  }));
+
+  it('can instantiate service with new', inject([Http], (http: Http) => {
+    expect(http).not.toBeNull('http should be provided');
+    let service = new AuthService(http);
+    expect(service instanceof AuthService).toBe(true, 'new service should be ok');
+  }));
+
+  // login
+  describe('when login', () => {
+    let backend: MockBackend;
+    let service: AuthService;
+    let username: string = 'anyString';
+    let password: string = 'anyString';
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be: MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+      let loginResponse: LoginResponse = {
+        status: 'success',
+        message: 'User already logged in successfully.',
+        data: '',
+        grace: false
+      };
+      const options = new ResponseOptions({status: 200, body: {data: loginResponse}});
+      response = new Response(options);
+    }));
+
+    it('should login (then)', async(inject([], () => {
+
+      backend.connections.subscribe((c: MockConnection) => {
+        expect(c.request.url).toBe('user/login', 'request URL is correct');
+        expect(c.request.method).toBe(1, 'request method is correct');
+
+        const requestBody = JSON.parse(c.request.getBody());
+        expect(typeof requestBody.username === 'string').toBeTruthy();
+        expect(typeof requestBody.password === 'string').toBeTruthy();
+
+        return c.mockRespond(response);
+      });
+
+      service.login(username, password).toPromise()
+        .then((res: LoginResponse) => {
+          expect(res.status).toBe('success', 'should get logged in');
+        });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let loginResponse: LoginResponse = {
+        status: 'failure',
+        message: 'Invalid username/email or password.',
+        data: ''
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: loginResponse}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.login(username, password)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  // checkSession
+  describe('when checkSession', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let sessionCode: string = 'anyString';
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be: MockBackend)=> {
+      backend = be;
+      service = new AuthService(http);
+
+      let checkSessionResponse: CheckSessionResponse = {
+        status: 'success',
+        message: 'Valid user found.',
+        data: ''
+      };
+
+      const options =new ResponseOptions({status: 200, body: {data: checkSessionResponse}});
+      response = new Response(options);
+    }));
+
+    it('should checkSession(then)', async(inject([], () =>{
+
+      backend.connections.subscribe((s: MockConnection) => {
+        expect(s.request.url).toBe('session/check', 'request url is correct');
+        expect(s.request.method).toBe(0,'Request Method is correct');
+        return s.mockRespond(response);
+      });
+      service.checkSession().toPromise()
+        .then((res: CheckSessionResponse) => {
+          expect(res.status).toBe('success', 'should checked Session');
+        });
+    })));
+
+    it('Should throw an error on wrong credentials', async(inject([], () =>{
+      let checkSessionResponse: CheckSessionResponse = {
+        status: 'failure',
+        message: 'Authentication failed',
+        data: ''
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: checkSessionResponse}}));
+      backend.connections.subscribe((s: MockConnection) => s.mockRespond(resp));
+
+      service.checkSession()
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  // logout
+  describe('when logout', () => {
+    let backend: MockBackend;
+    let service: AuthService;
+    let sessionCode: string = 'anyString';
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be: MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let logoutResponse: LogoutResponse = {
+        status: 'success',
+        message: 'User logged out successfully.',
+        data: ''
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: logoutResponse}});
+      response = new Response(options);
+    }));
+
+    it('should logout (then)', async(inject([], () => {
+
+       backend.connections.subscribe((c: MockConnection) => {
+        expect(c.request.url).toBe('user/logout', 'request URL is correct');
+        expect(c.request.method).toBe(1, 'request method is correct');
+
+        const requestBody = JSON.parse(c.request.getBody());
+        expect(typeof requestBody.sessionCode === 'string').toBeTruthy();
+
+        return c.mockRespond(response);
+      });
+
+      service.logout(sessionCode).toPromise()
+        .then((res: LogoutResponse) => {
+          expect(res.status).toBe('success', 'logged out');
+        });
+    })));
+
+  });
+
+  // Activates User Account
+  describe('when activateUser', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let id: number ;
+    let code: number;
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let activateUserRespond: ActivateUserRespond = {
+        status  : 'success',
+        message : 'Account Successfully Activated.'
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: activateUserRespond}});
+      response = new Response(options);
+    }));
+
+    it('should activateUser (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user/activate/${id}/${code}', 'Request url is correct');
+        expect(a.request.method).toBe(0, 'Request method is correct');
+
+        return a.mockRespond(response);
+      });
+
+      service.activateUser(id, code).toPromise().then((res: ActivateUserRespond) => {
+        expect(res.status).toBe('success', 'Account Successfully Activated');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let activateUserRespond: ActivateUserRespond = {
+        status: 'failure',
+        message: 'Authentication failed..'
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: activateUserRespond}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.activateUser(id, code)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  // Assign Subscription to user
+  describe('when assignSubcriptionUser', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let uID: string ='anyString';
+    let sID: number ;
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let assignSubcriptionUserResp: AssignSubcriptionUserResp = {
+        status  : 'success',
+        message : 'Subscription Successfully Assigned!'
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: assignSubcriptionUserResp}});
+      response = new Response(options);
+    }));
+
+    it('should assignSubcriptionUser (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user/assignSubscription/uID', 'Request url is correct');
+        expect(a.request.method).toBe(2, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+      });
+
+      service.assignSubcriptionUser(sID).toPromise().then((res: AssignSubcriptionUserResp) => {
+        expect(res.status).toBe('success', 'Account Successfully Activated');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let assignSubcriptionUserResp: AssignSubcriptionUserResp = {
+        status: 'failure',
+        message: 'Authentication failed.'
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: assignSubcriptionUserResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.assignSubcriptionUser(sID)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  // Create User
+  describe('when createUser', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let userDetails = [];
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let createUserResp: CreateUserResp = {
+        status  : 'success',
+        message : 'User added successfully',
+        data    : '{ id : addedUserID }'
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: createUserResp}});
+      response = new Response(options);
+    }));
+
+    it('should createUser (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user', 'Request url is correct');
+        expect(a.request.method).toBe(1, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+         expect(typeof requestBody.userDetails).toBeTruthy();
+         return a.mockRespond(response);
+      });
+
+      service.createUser(userDetails).toPromise().then((res: CreateUserResp) => {
+        expect(res.status).toBe('success', 'Usser added successfully');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let createUserResp: CreateUserResp = {
+        status  : 'failure',
+        message : 'User added successfully',
+        data    : '{ id : addedUserID }'
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: createUserResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.createUser(userDetails)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  // Create/Login User via LinkedIn
+  describe('when createLinkedin', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let linkedinUserDetails = [];
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let createLinkedinResp: CreateLinkedinResp = {
+        status  : 'success',
+        message : 'User added successfully',
+        data    : '{ id : addedUserID }',
+        linked_in: true,
+        linkedin_signup : true
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: createLinkedinResp}});
+      response = new Response(options);
+    }));
+
+    it('should createLinkedin (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user', 'Request url is correct');
+        expect(a.request.method).toBe(1, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+         expect(typeof requestBody.linkedinUserDetails).toBeTruthy();
+         return a.mockRespond(response);
+      });
+
+      service.createUser(linkedinUserDetails).toPromise().then((res: CreateLinkedinResp) => {
+        expect(res.status).toBe('success', 'User added successfully');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let createLinkedinResp: CreateLinkedinResp = {
+        status  : 'failure',
+        message : 'User not added successfully',
+        data    : '{ id : addedUserID }'
+      };
+
+      let resp = new Response(new ResponseOptions({status: 400, body: {data: createLinkedinResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.createUser(linkedinUserDetails)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  //Delete user
+  describe('when deleteUser', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let id: number;
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let deleteUserResp: DeleteUserResp = {
+        status  : 'success',
+        message : 'User deleted successfully',
+        data    : ''
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: deleteUserResp}});
+      response = new Response(options);
+    }));
+
+    it('should deleteUser (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user', 'Request url is correct');
+        expect(a.request.method).toBe(1, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+         return a.mockRespond(response);
+      });
+
+      service.createUser(id).toPromise().then((res: DeleteUserResp) => {
+        expect(res.status).toBe('success', 'User deleted successfully');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let deleteUserResp: DeleteUserResp = {
+        status  : 'failure',
+        message : 'User deleted successfully',
+        data    : ''
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: deleteUserResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.createUser(id)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  //Forgot User
+  describe('when forgotPassword', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let username: string = 'anyString';
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let forgotPasswordResp: ForgotPasswordResp = {
+        status  : 'success',
+        message : 'Mail Sent. Please check your email for the reset link.',
+        data    : ''
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: forgotPasswordResp}});
+      response = new Response(options);
+    }));
+
+    it('should forgotPassword (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user/forgotPassword/${username}', 'Request url is correct');
+        expect(a.request.method).toBe(0, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+        return a.mockRespond(response);
+      });
+
+      service.forgotPassword(username).toPromise().then((res: ForgotPasswordResp) => {
+        expect(res.status).toBe('success', 'Mail Sent. Please check your email for the reset link.');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let forgotPasswordResp: ForgotPasswordResp = {
+        status  : 'failure',
+        message : 'please reset password',
+        data    : ''
+      };
+
+      let resp = new Response(new ResponseOptions({status: 500, body: {data: forgotPasswordResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.forgotPassword(username)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  // Get InviteCode Status
+  describe('when getInviteCodeStatus', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let invitecode: number ;
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let getInviteCodeStatusResp: GetInviteCodeStatusResp = {
+        status  : 'success',
+        message : 'Mail Sent. Please check your email for the reset link.',
+        data    : ''
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: getInviteCodeStatusResp}});
+      response = new Response(options);
+    }));
+
+    it('should getInviteCodeStatus (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user/inviteCode/${invitecode}', 'Request url is correct');
+        expect(a.request.method).toBe(0, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+        return a.mockRespond(response);
+      });
+
+      service.getInviteCodeStatus(invitecode).toPromise().then((res: GetInviteCodeStatusResp) => {
+        expect(res.status).toBe('success', 'Mail Sent. Please check your email for the reset link.');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let getInviteCodeStatusResp: GetInviteCodeStatusResp = {
+        status  : 'failure',
+        message : 'please reset password',
+        data    : ''
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: getInviteCodeStatusResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.getInviteCodeStatus(invitecode)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  //Get User
+   describe('when getUser', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let userId: number ;
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let getUserResp: GetUserResp = {
+        status  : 'success',
+        message : '',
+        data    : ''
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: getUserResp}});
+      response = new Response(options);
+    }));
+
+    it('should getUser (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user/${userId}', 'Request url is correct');
+        expect(a.request.method).toBe(0, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+        return a.mockRespond(response);
+      });
+
+      service.getUser(userId).toPromise().then((res: GetInviteCodeStatusResp) => {
+        expect(res.status).toBe('success', 'Mail Sent. Please check your email for the reset link.');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let getUserResp: GetUserResp = {
+        status  : 'failure',
+        message : 'please reset password',
+        data    : ''
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: getUserResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.getUser(userId)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  //Request Activation Mail
+  describe('when requestActivationMail', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let email: string = 'anyString';
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let requestActivationMailResp: RequestActivationMailResp = {
+        status  : 'success',
+        message : 'Mail Sent.'
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: requestActivationMailResp}});
+      response = new Response(options);
+    }));
+
+    it('should requestActivationMail (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user/sendActivationMail', 'Request url is correct');
+        expect(a.request.method).toBe(1, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+         expect(typeof requestBody.email).toBeTruthy();
+         return a.mockRespond(response);
+      });
+
+      service.requestActivationMail(email).toPromise().then((res: RequestActivationMailResp) => {
+        expect(res.status).toBe('success', 'User added successfully');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let requestActivationMailResp: RequestActivationMailResp = {
+        status  : 'failure',
+        message : 'Mail not Sent.'
+      };
+
+      let resp = new Response(new ResponseOptions({status: 400, body: {data: requestActivationMailResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.requestActivationMail(email)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  //Reset Forgot Password
+  describe('when resetForgotPassword', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let id: number;
+    let hash: string = 'anyString';
+    let pass: string = 'anyString';
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let resetForgotPasswordResp: ResetForgotPasswordResp = {
+        status  : 'success',
+        message : 'Password Reset'
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: resetForgotPasswordResp}});
+      response = new Response(options);
+    }));
+
+    it('should resetForgotPassword (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe('user/forgotPassword', 'Request url is correct');
+        expect(a.request.method).toBe(1, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+         expect(typeof requestBody.linkedinUserDetails).toBeTruthy();
+         return a.mockRespond(response);
+      });
+
+      service.resetForgotPassword(id, hash, pass).toPromise().then((res: ResetForgotPasswordResp) => {
+        expect(res.status).toBe('success', 'User added successfully');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let resetForgotPasswordResp: ResetForgotPasswordResp = {
+        status  : 'failure',
+        message : 'Password Reset not done'
+      };
+
+      let resp = new Response(new ResponseOptions({status: 400, body: {data: resetForgotPasswordResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.resetForgotPassword(id, hash, pass)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  //Reset Password
+  describe('when resetPassword', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let id: number;
+    let oldPassword: string = 'anyString';
+    let newpassword: string = 'anyString';
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let resetPasswordResp: ResetPasswordResp = {
+        status  : 'success',
+        message : 'Password Reset'
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: resetPasswordResp}});
+      response = new Response(options);
+    }));
+
+    it('should resetPassword (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe(`user/${id}/resetPassword`, 'Request url is correct');
+        expect(a.request.method).toBe(1, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+         expect(typeof requestBody.linkedinUserDetails).toBeTruthy();
+         return a.mockRespond(response);
+      });
+
+      service.resetPassword(id, oldPassword, newpassword).toPromise().then((res: ResetPasswordResp) => {
+        expect(res.status).toBe('success', 'Password Reset successfully');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let resetPasswordResp: ResetPasswordResp = {
+        status  : 'failure',
+        message : 'Password Reset not successfully'
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: resetPasswordResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.resetPassword(id, oldPassword, newpassword)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+  //Update User
+  describe('when updateUser', () =>{
+    let backend: MockBackend;
+    let service: AuthService;
+    let userDetails = [];
+    let id: number ;
+    let response: Response;
+
+    beforeEach(inject([Http, XHRBackend], (http: Http, be:MockBackend) => {
+      backend = be;
+      service = new AuthService(http);
+
+      let updateUserResp: UpdateUserResp = {
+        status  : 'success',
+        message : 'Subscription Successfully Assigned!'
+      }
+
+      const options = new ResponseOptions({status: 200, body: {data: updateUserResp}});
+      response = new Response(options);
+    }));
+
+    it('should updateUser (then)', async(inject([], () => {
+
+      backend.connections.subscribe((a: MockConnection) => {
+        expect(a.request.url).toBe(`user/${id}`, 'Request url is correct');
+        expect(a.request.method).toBe(2, 'Request method is correct');
+        const requestBody = JSON.parse(a.request.getBody());
+      });
+
+      service.updateUser(id, userDetails).toPromise().then((res: UpdateUserResp) => {
+        expect(res.status).toBe('success', 'Account Successfully Activated');
+      });
+    })));
+
+    it('should throw an Observable error on wrong credentials', async(inject([], () => {
+      let updateUserResp: UpdateUserResp = {
+        status: 'failure',
+        message: 'Authentication failed.'
+      };
+
+      let resp = new Response(new ResponseOptions({status: 401, body: {data: updateUserResp}}));
+      backend.connections.subscribe((c: MockConnection) => c.mockRespond(resp));
+
+      service.updateUser(id, userDetails)
+        .catch(err => {
+          expect(err.status).toMatch('failure');
+          return Observable.of(null); // failure is the expected test result
+        })
+        .toPromise();
+    })));
+  });
+
+});
+
+class LoginResponse {
+  status: string;
+  message: string;
+  data: string;
+  grace?: boolean;
+}
+
+class CheckSessionResponse {
+  status: string;
+  message: string;
+  data: string;
+}
+class LogoutResponse{
+  status: string;
+  message: string;
+  data: string;
+}
+class ActivateUserRespond {
+  status  : string;
+  message : string;
+}
+class AssignSubcriptionUserResp {
+  status  : string;
+  message : string;
+}
+class CreateUserResp {
+  status  : string;
+  message : string;
+  data    : string;
+}
+class CreateLinkedinResp{
+  status  : string;
+  message : string;
+  data    : string;
+  linked_in?: boolean;
+  linkedin_signup?: boolean;
+}
+class DeleteUserResp {
+  status  : string;
+  message : string;
+  data    : string;
+}
+class ForgotPasswordResp {
+  status  : string;
+  message : string;
+  data    : string;
+}
+class GetInviteCodeStatusResp {
+  status  : string;
+  message : string;
+  data    : string;
+}
+class GetUserResp {
+  status  : string;
+  message : string;
+  data    : string;
+}
+class RequestActivationMailResp {
+  status  : string;
+  message : string;
+}
+class ResetForgotPasswordResp {
+  status  : string;
+  message : string;
+}
+class ResetPasswordResp {
+  status  : string;
+  message : string;
+}
+class UpdateUserResp {
+  status  : string;
+  message : string;
+}
