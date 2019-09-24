@@ -21,6 +21,7 @@ export class ProductService {
           })
       );
   }
+  
   getProductDetails(id: number){
     return this.http
       .get<any>(`http://localhost:3000/products/${id}`).pipe(
@@ -30,6 +31,17 @@ export class ProductService {
           })
       );
   }
+
+  postProduct(data: any){
+    return this.http
+      .post<any>(`products`, data).pipe(
+          map((res: any) => res),
+          catchError(err => {
+            return throwError(err);
+          })
+      );
+  }
+
 
   handleError(err: any): any {
     throw new Error('Error occured.'+err);

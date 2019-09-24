@@ -39,6 +39,10 @@ const routes: Routes = [
   {
     path: 'admin/dashboard',
     loadChildren: './admin/dashboard/dashboard.module#DashboardModule'
+  },
+  {
+    path: 'admin/product',
+    loadChildren: './admin/product/product.module#ProductModule'
   }
 ];
 

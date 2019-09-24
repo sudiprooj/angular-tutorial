@@ -1,0 +1,20 @@
+<div>
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit();">
+    <div>
+      <label>Product Name</label>
+      <input type="text" formControlName="name" />
+      <span *ngIf="productForm.get('name').invalid && productForm.get('name').touched">Product name is required</span>
+    </div>
+    <div>
+      <label>Product Image</label>
+      <input type="file" formControlName="image" />
+    </div>
+    <div>
+      <label>Product Price</label>
+      <input type="text" formControlName="price" />
+    </div>
+    <div>
+      <button type="submit" (click)="onSubmit();" [disabled]="!productForm.valid">Submit</button>
+    </div>
+  </form>
+</div>
