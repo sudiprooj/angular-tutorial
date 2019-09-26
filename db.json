@@ -1,49 +1,26 @@
 {
   "products": [
     {
-      "id": 1,
-      "name": "Camera",
-      "image": "https://rukminim1.flixcart.com/image/416/416/j4x207k0/television/2/p/t/lg-24lj470a-original-imaevq28saz6yq7h.jpeg?q=70",
-      "price": 300
+      "name": "Chicken Curry",
+      "image": "C:\\fakepath\\tree.jpg",
+      "price": "250",
+      "id": 2
     },
     {
-      "id": 3,
-      "name": "Computer",
-      "image": "https://rukminim1.flixcart.com/image/416/416/j4x207k0/television/2/p/t/lg-24lj470a-original-imaevq28saz6yq7h.jpeg?q=70",
-      "price": 300
-    },
-    {
-      "name": "mobile",
-      "image": "https://rukminim1.flixcart.com/image/416/416/j4x207k0/television/2/p/t/lg-24lj470a-original-imaevq28saz6yq7h.jpeg?q=70",
-      "price": "300",
-      "id": 8
-    },
-    {
-      "name": "chicken",
+      "name": "Chicken Masala",
       "image": "C:\\fakepath\\tree1.jpg",
       "price": "300",
-      "id": 9
+      "id": 3
     },
     {
-      "name": "chicken",
+      "name": "Chicken Masala",
       "image": "C:\\fakepath\\tree1.jpg",
       "price": "300",
-      "id": 10
-    },
-    {
-      "name": "Steam Rice",
-      "image": "C:\\fakepath\\tree2.jpg",
-      "price": "50",
-      "id": 11
-    },
-    {
-      "name": "Steam Rice",
-      "image": "C:\\fakepath\\tree2.jpg",
-      "price": "50",
-      "id": 12
+      "id": 4
     }
   ],
   "login": {
-    "success": true
+    "success": true,
+    "token": ""
   }
 }

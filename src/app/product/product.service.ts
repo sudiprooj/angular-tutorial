@@ -14,7 +14,7 @@ export class ProductService {
 
   getProducts(){
     return this.http
-      .get<any>(`http://localhost:3000/products`).pipe(
+      .get<any>(`products`).pipe(
           map((res: any) => res),
           catchError(err => {
             return throwError(err);
@@ -24,7 +24,7 @@ export class ProductService {
   
   getProductDetails(id: number){
     return this.http
-      .get<any>(`http://localhost:3000/products/${id}`).pipe(
+      .get<any>(`products/${id}`).pipe(
           map((res: any) => res),
           catchError(err => {
             return throwError(err);
@@ -40,6 +40,16 @@ export class ProductService {
             return throwError(err);
           })
       );
+  }
+
+  deleteProduct(id: number){
+    return this.http
+      .delete(`products/${id}`).pipe(
+        map((res: any) => res),
+        catchError(err => {
+          return throwError(err);
+        })
+    );
   }
 
 

@@ -9,6 +9,11 @@ import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 
+
+// Services
+//import { AuthService } from './auth/auth.service';
+import { UserService } from './user/user.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,6 +30,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
       useClass: AuthInterceptor,
       multi: true
     },
+    
   ],
   bootstrap: [AppComponent]
 })

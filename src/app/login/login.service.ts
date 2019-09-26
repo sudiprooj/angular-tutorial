@@ -22,6 +22,16 @@ export class LoginService {
       );
   }
 
+  doLogout(){
+    return this.http
+      .get<any>(`login`, {}).pipe(
+          map((res: any) => res),
+          catchError(err => {
+            return throwError(err);
+          })
+      );
+  }
+
   handleError(err: any): any {
     throw new Error('Error occured.'+err);
   }

@@ -18,3 +18,17 @@
     </div>
   </form>
 </div>
+
+<div style="display: flex;">
+  <ul>
+    <li *ngFor="let item of productArray" style="list-style: none; height: 300px; width: 100%;">
+      <img [src]="item.image" alt="product image" width="300" (click)="details(item.id);" />
+      <span>{{item.name}}</span>
+      <span>${{item.price}}</span>
+      <div style="float:right">
+        <button class="btn" (click)="editProduct(item.id);">Edit</button>
+        <button class="btn" (click)="deleteProduct(item.id);">Delete</button>
+      </div>
+    </li>
+  </ul>
+</div>
