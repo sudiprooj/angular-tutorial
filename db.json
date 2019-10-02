@@ -1,22 +1,16 @@
 {
   "products": [
     {
-      "name": "Chicken Curry",
-      "image": "C:\\fakepath\\tree.jpg",
-      "price": "250",
-      "id": 2
+      "id": 2,
+      "name": "Chicken masala",
+      "image": "C:\\fakepath\\tree2.jpg",
+      "price": "250"
     },
     {
-      "name": "Chicken Masala",
-      "image": "C:\\fakepath\\tree1.jpg",
-      "price": "300",
-      "id": 3
-    },
-    {
-      "name": "Chicken Masala",
-      "image": "C:\\fakepath\\tree1.jpg",
-      "price": "300",
-      "id": 4
+      "id": 4,
+      "name": "fry rice",
+      "image": "C:\\fakepath\\tree2.jpg",
+      "price": "300"
     }
   ],
   "login": {

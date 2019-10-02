@@ -42,6 +42,16 @@ export class ProductService {
       );
   }
 
+  putProduct(data: any){
+    return this.http
+      .put<any>(`products/${data.id}`, data).pipe(
+          map((res: any) => res),
+          catchError(err => {
+            return throwError(err);
+          })
+      );
+  }
+
   deleteProduct(id: number){
     return this.http
       .delete(`products/${id}`).pipe(

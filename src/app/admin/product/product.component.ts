@@ -19,6 +19,7 @@ export class ProductComponent implements OnInit {
 
   ngOnInit() {
     this.productForm = this.fb.group({
+      id: [''],
       name: ['', Validators.required],
       image: ['', Validators.required],
       price: ['', Validators.required]
@@ -32,14 +33,26 @@ export class ProductComponent implements OnInit {
   }
 
   onSubmit(){
-    this.productService.postProduct(this.productForm.value).subscribe(res=>{
-      console.log(res);
-      this.productArray.push(res);
-    })
+    if(this.productForm.get("id").value === ""){
+      this.productService.postProduct(this.productForm.value).subscribe(res=>{
+        console.log(res);
+        this.productArray.push(res);
+      })
+    }else{
+      this.productService.putProduct(this.productForm.value).subscribe(res=>{
+        console.log(res);
+        let index = this.productArray.findIndex(obj => obj.id === this.productForm.get("id").value);
+        this.productArray.splice(index, 1, res);
+      })
+    }
   }
 
   editProduct(id: number){
-
+    this.productService.getProductDetails(id).subscribe(res=>{
+      this.productForm.get("id").setValue(res.id);
+      this.productForm.get("name").setValue(res.name);
+      this.productForm.get("price").setValue(res.price);
+    })
   }
 
   deleteProduct(id: number){
